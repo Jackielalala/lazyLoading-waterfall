@@ -5,10 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>懒加载新闻瀑布流</title>
+    <style>
+        * {
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+        ul,li {
+            list-style:none;
+        }
+        a {
+            text-decoration:none;
+        }
+        .item {
+            display:inline-block;
+            display:position;
+            padding:20px;
+            border:1px solid #ccc;
+            transition:all .8s;
+        }
+        .item img {
+            width:400px;
+        }
+        .pic-ct {
+            position:relative;
+        }
+        .clearfix::after {
+            content:'';
+            display:none;
+            clear:both;
+        }
+    </style>
 </head>
 <body>
     <div class="contaienr">
-        <ul class="pic-ct">
+        <ul class="pic-ct clearfix">
             <!--<li class="item">
                 <a href="#" class="link">
                     <img src="" alt="">
@@ -47,7 +78,7 @@
 
         function dosth(){
             $.ajax({
-                url:'http://platform.sina.com.cn/slide/album_tecch',
+                url:'http://platform.sina.com.cn/slide/album_tech',
                 type:'get',
                 dataType:'jsonp',
                 jsonp:'jsoncallback',
@@ -62,7 +93,7 @@
                     if(ret.status.code==0){
                         var dataArr=ret.data;
                         var $nodes = renderData(dataArr);
-                        render($nodes);
+                        setNode($nodes);
                         curPage++;
                     }
                 }
@@ -70,21 +101,18 @@
         }
         var curPage = 1;
         var perPageCount = 10;
+
         function renderData(items){
-            var tpl='';
-            var $node;
             for(var i=0;i<items.length;i++){
-                tpl = '<li class="item"><a href="#" class="link"><img src="'+items[i].img_url+'" alt=""></a><h4>'+items[i].short_name+'</h4><p class="descript">'+items[i].short_intro+'</p></li>';
+                var tpl = '<li class="item"><a href="#" class="link"><img src="'+items[i].img_url+'" alt=""></a><h4>'+items[i].short_name+'</h4><p class="descript">'+items[i].short_intro+'</p></li>';
+                var $node = $(tpl);
+                $('.pic-ct').append($node);
             };
-            $nodes = $(tpl);
-            $('.pic-ct').append($nodes);
-            return $nodes;
         }
 
         var colSumHeight = [];
-
-        function render($nodes){
-            var nodeWidth = $nodes.outerWidth(true);
+        function setNode(items){
+            var nodeWidth = $('.item').outerWidth(true);
             var colNum = Math.floor($(window).width()/nodeWidth);
 
             if(colSumHeight.length = 0){
@@ -93,8 +121,7 @@
                 }
             }
 
-            $nodes.each(function(){
-                var $cur = $(this);
+            items.each(function($one){
                 var idx=0;
                 var minSumHeight = colSumHeight[0];
                 for(var i=0;i<colNum;i++){
@@ -103,7 +130,7 @@
                         minSumHeight = colSumHeight[i];
                     }
                 }
-                $cur.css({
+                $one.css({
                     left:nodeWidth*idx,
                     top:minSumHeight
                 })
