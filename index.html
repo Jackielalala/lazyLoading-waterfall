@@ -76,6 +76,9 @@
             };
         };
 
+
+        var curPage = 1;
+        var perPageCount = 10;
         function dosth(){
             $.ajax({
                 url:'https://platform.sina.com.cn/slide/album_tech',
@@ -99,8 +102,6 @@
                 }
             })
         }
-        var curPage = 1;
-        var perPageCount = 10;
 
         function renderData(items){
             for(var i=0;i<items.length;i++){
@@ -111,11 +112,12 @@
         }
 
         var colSumHeight = [];
+         
         function setNode(items){
             var nodeWidth = $('.item').outerWidth(true);
             var colNum = Math.floor($(window).width()/nodeWidth);
 
-            if(colSumHeight.length = 0){
+            if(colSumHeight.length = 0){ 
                 for(var i=0;i<colNum;i++){
                     colSumHeight.push(0);
                 }
@@ -134,19 +136,9 @@
                     left:nodeWidth*idx,
                     top:minSumHeight
                 })
-
+                colSumHeight[idx] += $(this).outerHeight(true);
             })
         }
-
-
-
-
-
-
-
-
-
-
 
     /*    封装一个ExposureTarget函数
         var ExposureTarget = (function(){
@@ -177,17 +169,6 @@
 
         ExposureTarget.bind($('.load'),dosth)
         function dosth(){}   */ 
-
-
-
-
-
-
-
-
-
-
-
 
 
     </script>
